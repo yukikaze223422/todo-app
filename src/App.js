@@ -4,7 +4,7 @@ function App() {
   const [todoTitle, setTodoTitle] = useState("");
   const [todoList, setTodoList] = useState([]);
   const [decision, setDecision] = useState(false);
-  const [currentTodo, setCurrentTodo] = useState({});
+  const [currentTodo, setCurrentTodo] = useState("");
   const [isComplete, setIsComplete] = useState([]);
 
   const onChangeTitle = (e) => {
@@ -26,9 +26,15 @@ function App() {
     setTodoList(newTodo);
   };
 
-  const onClickEdit = (e) => {
+  const onClickEdit = (todo, id) => {
     setDecision(true);
-    setCurrentTodo({ ...currentTodo, text: e.target.value });
+    setTodoTitle(todo.title);
+    setCurrentTodo(todo.id);
+  };
+
+  const onClickChancel = () => {
+    setDecision(false);
+    setTodoTitle("");
   };
 
   const onClickComplete = (id) => {
@@ -47,6 +53,13 @@ function App() {
     setTodoList(returnTodo);
   };
 
+  const onClickEditResult = (e) => {
+    const newTodo = [...todoList];
+    setTodoTitle(e.target.value);
+    newTodo[currentTodo - 1].title = todoTitle;
+    setDecision(false);
+  };
+
   return (
     <>
       <h2>TODO作成</h2>
@@ -57,17 +70,13 @@ function App() {
               type="text"
               name="text"
               placeholder="編集内容を入力"
-              value={currentTodo.text}
+              value={todoTitle}
               onChange={onChangeTitle}
             />
-            <button type="button" onClick={onClickTodoList}>
+            <button type="button" onClick={onClickEditResult}>
               変更
             </button>
-            <button
-              type="button"
-              onClick={onClickTodoList}
-              disabled={!todoTitle}
-            >
+            <button type="button" onClick={onClickChancel}>
               キャンセル
             </button>
           </form>
@@ -98,11 +107,17 @@ function App() {
           return (
             <div key={todo.id}>
               <li>{todo.title}</li>
-              <button type="button" onClick={() => onClickDelete(todo)}>
-                削除
-              </button>
-              <button onClick={onClickEdit}>編集</button>
-              <button onClick={() => onClickComplete(id)}>完了</button>
+              {decision ? (
+                <></>
+              ) : (
+                <>
+                  <button type="button" onClick={() => onClickDelete(todo)}>
+                    削除
+                  </button>
+                  <button onClick={() => onClickEdit(todo, id)}>編集</button>
+                  <button onClick={() => onClickComplete(id)}>完了</button>
+                </>
+              )}
             </div>
           );
         })}
