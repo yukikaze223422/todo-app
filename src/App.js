@@ -1,23 +1,25 @@
 import React, { useState } from "react";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import SendIcon from "@mui/icons-material/Send";
+import Box from "@mui/material/Box";
 
 function App() {
   const [todoTitle, setTodoTitle] = useState("");
+  const [todoDetail, setTodoDetail] = useState("");
   const [todoList, setTodoList] = useState([]);
   const [decision, setDecision] = useState(false);
   const [currentTodo, setCurrentTodo] = useState("");
   const [isComplete, setIsComplete] = useState([]);
 
-  const onChangeTitle = (e) => {
-    setTodoTitle(e.target.value);
-  };
-
   const onClickTodoList = () => {
     const newTodo = [
       ...todoList,
-      { id: todoList.length + 1, title: todoTitle },
+      { id: todoList.length + 1, title: todoTitle, detail: todoDetail },
     ];
     setTodoList(newTodo);
     setTodoTitle("");
+    setTodoDetail("");
   };
 
   const onClickDelete = (id) => {
@@ -29,6 +31,7 @@ function App() {
   const onClickEdit = (todo, id) => {
     setDecision(true);
     setTodoTitle(todo.title);
+    setTodoDetail(todo.detail);
     setCurrentTodo(todo.id);
   };
 
@@ -56,7 +59,9 @@ function App() {
   const onClickEditResult = (e) => {
     const newTodo = [...todoList];
     setTodoTitle(e.target.value);
+    setTodoDetail(e.target.value);
     newTodo[currentTodo - 1].title = todoTitle;
+    newTodo[currentTodo - 1].detail = todoDetail;
     setDecision(false);
   };
 
@@ -66,12 +71,22 @@ function App() {
       {decision ? (
         <>
           <form>
-            <input
+            <TextField
+              label="title-edit"
+              variant="standard"
               type="text"
               name="text"
-              placeholder="編集内容を入力"
               value={todoTitle}
-              onChange={onChangeTitle}
+              onChange={(e) => setTodoTitle(e.target.value)}
+            />
+            <TextField
+              label="detail-edit"
+              variant="standard"
+              type="text"
+              name="detail"
+              value={todoDetail}
+              onChange={(e) => setTodoDetail(e.target.value)}
+              sx={{ marginLeft: "10px" }}
             />
             <button type="button" onClick={onClickEditResult}>
               変更
@@ -84,20 +99,32 @@ function App() {
       ) : (
         <>
           <form>
-            <input
+            <TextField
+              label="title"
+              variant="standard"
               type="text"
-              name="text"
-              placeholder="タイトルを入力"
+              name="title"
               value={todoTitle}
-              onChange={onChangeTitle}
+              onChange={(e) => setTodoTitle(e.target.value)}
             />
-            <button
+            <TextField
+              label="detail"
+              variant="standard"
+              type="text"
+              name="detail"
+              value={todoDetail}
+              onChange={(e) => setTodoDetail(e.target.value)}
+              sx={{ marginLeft: "10px" }}
+            />
+            <Button
+              variant="contained"
+              endIcon={<SendIcon />}
               type="button"
               onClick={onClickTodoList}
               disabled={!todoTitle}
             >
               送信
-            </button>
+            </Button>
           </form>
         </>
       )}
@@ -107,6 +134,7 @@ function App() {
           return (
             <div key={todo.id}>
               <li>{todo.title}</li>
+              <p>{todo.detail}</p>
               {decision ? (
                 <></>
               ) : (
@@ -128,6 +156,7 @@ function App() {
           return (
             <div key={todo.id}>
               <li>{todo.title}</li>
+              <p>{todo.detail}</p>
               <button type="button" onClick={() => onClickReturn(id)}>
                 戻す
               </button>
